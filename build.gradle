@@ -1,0 +1,105 @@
+buildscript {
+    ext{
+
+    }
+    repositories {
+        jcenter()
+        mavenLocal()
+        mavenCentral()
+    }
+    dependencies {
+    }
+}
+
+
+apply plugin: 'java'
+apply plugin: 'maven'
+
+ext{
+    projectName = 'junit5-mockito-gradle'
+    projectGroup = 'com.github.ankurpathak'
+    projectArtifact = 'junit5-mockito-gradle'
+    projectVersion = '1.0-SNAPSHOT'
+    javaVer = '11'
+    jodaTimeVer = '2.10.1'
+    junitEngineVer = '5.1.0'
+    mockitoVer = '2.23.0'
+}
+
+group = projectGroup
+version = projectVersion
+sourceCompatibility = javaVer
+targetCompatibility = javaVer
+
+
+repositories {
+    jcenter()
+    mavenLocal()
+    mavenCentral()
+}
+
+dependencies {
+    implementation "joda-time:joda-time:$jodaTimeVer"
+    testImplementation "org.junit.jupiter:junit-jupiter-api:$junitEngineVer"
+    testRuntime "org.junit.jupiter:junit-jupiter-engine:$junitEngineVer"
+    testImplementation "org.mockito:mockito-core:$mockitoVer"
+    testImplementation "org.mockito:mockito-junit-jupiter:$mockitoVer"
+}
+
+
+jar {
+    manifest {
+        attributes 'Main-Class': 'com.github.ankurpathak.HelloWorld'
+    }
+}
+
+test {
+    useJUnitPlatform()
+}
+
+task testsJar(type: Jar) {
+    classifier = 'tests'
+    from sourceSets.test.output
+}
+
+task sourcesJar(type: Jar, dependsOn: classes) {
+    classifier = 'sources'
+    from sourceSets.main.allSource
+}
+
+task testSourcesJar(type: Jar, dependsOn: classes) {
+    classifier = 'test-sources'
+    from sourceSets.test.allSource
+}
+
+task sourceJavadoc(type: Javadoc) {
+    source = sourceSets.main.allSource
+}
+
+task testJavadoc(type: Javadoc) {
+    classpath = sourceSets.test.compileClasspath
+    source = sourceSets.test.allSource
+    destinationDir = file("$buildDir/testDocs")
+}
+
+task sourceJavadocJar(type: Jar) {
+    classifier = 'javadoc'
+    from sourceJavadoc
+}
+
+task testJavadocJar(type: Jar) {
+    classifier = 'test-javadoc'
+    from testJavadoc
+}
+
+artifacts{
+    archives testsJar
+    archives sourcesJar
+    archives testSourcesJar
+    archives sourceJavadocJar
+    archives testJavadocJar
+}
+
+
+
+
